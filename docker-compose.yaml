@@ -1,0 +1,65 @@
+services:
+  orders:
+    build:
+      context: .
+      dockerfile: ./apps/orders/Dockerfile
+      target: development
+    command: pnpm start-docker:dev -- apps/orders/src/main.ts # using nodemon instead of nest starter to fix hot-reload bug when running locally
+    env_file:
+      - ./apps/orders/.env
+    depends_on:
+      - rabbitmq
+      - mongodb
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+
+  billing:
+    build:
+      context: .
+      dockerfile: ./apps/billing/Dockerfile
+      target: development
+    command: pnpm start-docker:dev -- apps/billing/src/main.ts
+    env_file:
+      - ./apps/billing/.env
+    depends_on:
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  fraud:
+    build:
+      context: .
+      dockerfile: ./apps/fraud/Dockerfile
+      target: development
+    command: pnpm start-docker:dev -- apps/fraud/src/main.ts
+    env_file:
+      - ./apps/billing/.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3003:3003
+
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - 5672:5672
+
+  mongodb:
+    image: docker.io/arm64v8/mongo:5.0 # if not on mac m1, change to image: mongo:5.0
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb
+      - MONGODB_ROOT_PASSWORD=password123
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password123
+    volumes:
+      - 'mongodb_master_data:/usr/src/db/mongodb'
+    ports:
+      - '27017:27017'
+volumes:
+  mongodb_master_data:
+    driver: local
