@@ -16,7 +16,10 @@ import { MongooseModule } from '@nestjs/mongoose';
     }),
 
     // Connect to the BILLING queue as a producer
-    RmqModule.register({ serviceName: BILLING_SERVICE }),
+    RmqModule.register({
+      serviceName: BILLING_SERVICE,
+      serviceEnvVar: 'RABBIT_MQ_BILLING_QUEUE',
+    }),
 
     //import database and mongoose module
     DatabaseModule,

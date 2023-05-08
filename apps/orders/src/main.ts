@@ -12,7 +12,9 @@ async function bootstrap() {
   const rmqService = app.get<RmqService>(RmqService);
 
   // Subscribe to ORDERS_UPDATE queue as a consumer
-  app.connectMicroservice(rmqService.getOptions('ORDERS_UPDATE'));
+  app.connectMicroservice(
+    rmqService.getOptions('RABBIT_MQ_ORDERS_UPDATE_QUEUE'),
+  );
   app.startAllMicroservices();
   await app.listen(port);
 }

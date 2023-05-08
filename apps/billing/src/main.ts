@@ -7,7 +7,7 @@ async function bootstrap() {
   const rmqService = app.get<RmqService>(RmqService);
 
   // Subscribe to the BILLING queue as a consumer
-  app.connectMicroservice(rmqService.getOptions('BILLING'));
+  app.connectMicroservice(rmqService.getOptions('RABBIT_MQ_BILLING_QUEUE'));
   await app.startAllMicroservices();
 }
 bootstrap();

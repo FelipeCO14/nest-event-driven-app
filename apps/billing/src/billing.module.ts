@@ -29,7 +29,10 @@ import { ORDERS_SERVICE } from './constants/service.constant';
     ]),
 
     // Connect to the ORDERS_UPDATE queue as a producer
-    RmqModule.register({ serviceName: ORDERS_SERVICE }),
+    RmqModule.register({
+      serviceName: ORDERS_SERVICE,
+      serviceEnvVar: 'RABBIT_MQ_ORDERS_UPDATE_QUEUE',
+    }),
   ],
   controllers: [BillingController],
   providers: [BillingService],
